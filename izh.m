@@ -11,7 +11,7 @@ VV=[];  uu=[];
 tau = 0.25; tspan = 0:tau:100;
 T1=tspan(end)/10;
 for t=tspan
-    if (t>T1) 
+    if (t>T1) % ES LA CORRIENTE DE ENTRADA
         I=14;
     else
         I=0;
