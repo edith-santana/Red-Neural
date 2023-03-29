@@ -34,7 +34,7 @@ ntype.pb.I=0.6;
 t_total=1; %segundos
 t_barrido=100;
 n_barrido=ceil(t_total/(t_barrido*0.001));
-I_Gatillo_nrmlzd=.5;
+I_Gatillo_nrmlzd=1;
 numero=90;
 Vm_general=zeros(numero,n_barrido);
 Iouts=zeros(numero,n_barrido);
@@ -52,8 +52,8 @@ end
 nresponse=randperm(90)';
 nresponse(1:45,2)=1;
 nresponse(1:45,3)=ntype.ts.V;%voltajes de reposo
-nresponse(45:90,2)=2;
-nresponse(45:90,3)=ntype.ps.V; %voltajes de reposo
+nresponse(46:90,2)=2;
+nresponse(46:90,3)=ntype.ps.V; %voltajes de reposo
 nresponse=sortrows( nresponse , 1);
 Vm_general(:,1)=nresponse(:,3);
 
@@ -62,10 +62,11 @@ Vm_general(:,1)=nresponse(:,3);
 pre=91; %es el numero de neurona para la neurona gatillo
 Inp_Unit_Neurons=ismember(pares(:,1),pre)*I_Gatillo_nrmlzd;
 posts=pares(find(Inp_Unit_Neurons~=0),2);
+Nrmlzd_I=I_Gatillo_nrmlzd;
 Iins(posts(:),1)=Nrmlzd_I;
 
 %barrido 1
-Nrmlzd_I=I_Gatillo_nrmlzd;
+
 for i=1:length(posts)
     disp(i)
     if nresponse(posts(i),2)==1
@@ -98,12 +99,14 @@ nb=2;
 %Iins(:,nb)=Iouts(:,nb-1);
 aux=find(n_inputs>1);%cuales de las POST reciben mas de una aferencia
 for i=1:length(aux)
-preaux=pre(find(posts(:,1)==aux(i)))
-cont=0;
-    for j=1:length(preaux)
-        cont=cont+Iouts(preaux(j), nb-1)
-    end
-Iins(aux(i),nb)=cont/length(preaux);
+    preaux=pre(find(posts(:,1)==aux(i)));%neuronas presinapticas que 
+    % envian impulsos a la misma neurona
+    cont=0;
+        for j=1:length(preaux)
+            cont=cont+Iouts(preaux(j), nb-1);
+        end
+    Iins(aux(i),nb)=cont/length(preaux);%asignar la corriente 
+    % promediada que le corresponde
 end
 % pre(find(posts==aux))
 
