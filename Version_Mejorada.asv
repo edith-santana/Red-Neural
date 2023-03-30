@@ -56,12 +56,12 @@ for i=1:length(fn)
 end
 
 nresponse=randperm(numero)';
-nresponse(1:45,2)=1;
-nresponse(1:45,3)=ntype.tb.V;%voltajes de reposo
-nresponse(46:75,2)=2;
-nresponse(46:75,3)=ntype.ts.V; %voltajes de reposo
-nresponse(76:90,2)=3;
-nresponse(76:90,3)=ntype.pb.V; %voltajes de reposo
+nresponse(1:30,2)=1;
+nresponse(1:30,3)=ntype.tb.V;%voltajes de reposo
+nresponse(31:60,2)=2;
+nresponse(31:60,3)=ntype.ts.V; %voltajes de reposo
+nresponse(61:90,2)=3;
+nresponse(61:90,3)=ntype.pb.V; %voltajes de reposo
 nresponse=sortrows( nresponse , 1);
 Vm_general(:,1)=nresponse(:,3);
 
@@ -105,12 +105,6 @@ for barr=1:n_barrido
         else
             Iouts(i,barr)=Nrmlzd_Io;
         end 
-        %volver a estimular con neurona gatillo
-        m=mod(barr,3)
-        if m==1 && barr>1 && sum(ismember(posts,i))>=1
-            Iouts(i,barr)=I_Gatillo_nrmlzd;
-        end
-        
         if n_peaks>=1
             activaciones(i,barr)=1;
         end
@@ -167,7 +161,6 @@ function [vm, v_postbarrido] = evaluar_neurona(neuron,v_prebarrido,t_barrido,Nrm
     tau = 0.25; 
     tspan = 0:tau:t_barrido;
     for t=tspan
-        neuron.I=awgn(neuron.I,5);
         V = V + tau*(0.04*V^2+5*V+140-u+(Nrmlzd_I*neuron.I));
         u = u + tau*neuron.a*(neuron.b*V-u);
         if V > 30
