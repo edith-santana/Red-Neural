@@ -95,26 +95,27 @@ tau=0.25;
 Vm_tiempototal=[];
 
 for barr=1:n_barrido
-    figure;
+%     figure;
     %vm_barridostotal=zeros(numero,1+t_barrido/tau);
     for i=1:numero
         %disp(i)
         if nresponse(i,2)==1 %tipo de respuesta
             [vm, v_postbarrido,Nrmlzd_Io,n_peaks]=global_neuron_response(ntype.tb,Vm_general(i,barr),t_barrido,Iins(i,barr));
-            Vm_general(i,barr)=v_actual;
+            Vm_general(i,barr+1)=v_postbarrido;
             vm_barridostotal(i,:)=vm;
-            plot(vm)
+           
         elseif nresponse(i,2)==2
             [vm, v_postbarrido, Nrmlzd_Io, n_peaks]=global_neuron_response(ntype.ts,Vm_general(i,barr),t_barrido,Iins(i,barr));
-            Vm_general(i,barr)=v_actual;
+            Vm_general(i,barr+1)=v_postbarrido;
             vm_barridostotal(i,:)=vm;
-            plot(vm)
+            
         elseif nresponse(i,2)==3
             [vm, v_postbarrido, Nrmlzd_Io, n_peaks]=global_neuron_response(ntype.pb,Vm_general(i,barr),t_barrido,Iins(i,barr));
-            Vm_general(i,barr)=v_actual;
+            Vm_general(i,barr+1)=v_postbarrido;
             vm_barridostotal(i,:)=vm;
-            plot(vm)
+            
         end
+        %plot(vm)
         hold on
         if sum(ismember(inhibidoras,i))==1
             Iouts(i,barr)=-0.2*Nrmlzd_Io;
@@ -126,15 +127,16 @@ for barr=1:n_barrido
         end
     end
     Vm_tiempototal=horzcat(Vm_tiempototal,vm_barridostotal);
+    new5=excitadoras(randperm(numel(excitadoras),5))
     for l=1:numero
-        if sum(ismember(posts,l))==1
+        if sum(ismember(new5,l))==1
             Iins(l,barr+1)=I_Gatillo_nrmlzd;
         else
             Iins(l,barr+1)=promediar_aferencias(pares,l, Iouts, Iins, barr);
         end
     end
 end
-figure
+%figure
 plot(sum(Vm_tiempototal,1))
 
 function Iins_n = promediar_aferencias(pares, n_neurona, Iouts, Iins, barr)
